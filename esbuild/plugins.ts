@@ -22,10 +22,8 @@ const analogPlugin: Plugin = {
 		});
 
 		build.onLoad({ filter: /.analog$/ }, async (args) => {
-			console.log('args', args.path);
 			await analogPlugin.handleHotUpdate?.({ file: args.path, modules: [] });
 			const result = await analogPlugin.transform?.('', args.path);
-			console.log('result', result?.code);
 			return { loader: 'js', contents: result?.code };
 		});
 	},

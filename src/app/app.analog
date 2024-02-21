@@ -1,11 +1,11 @@
+<script lang="ts">
+import { RouterOutlet } from '@angular/router';
+
+defineMetadata({
+	imports: [RouterOutlet],
+});
+</script>
+
 <template>
-	<h1>
-		hi there!!! a little behind? still behind? still?? interesting!!!!!!
-		updated? until this. changing
-	</h1>
-	<p>changing. interesting!! another update</p>
-	<p>one</p>
-	<p>two</p>
-	<p>three</p>
-	<p>five</p>
+	<router-outlet />
 </template>

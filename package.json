@@ -19,6 +19,8 @@
 		"@angular/platform-browser-dynamic": "^17.2.0",
 		"@angular/router": "^17.2.0",
 		"rxjs": "~7.8.0",
+		"todomvc-app-css": "^2.4.3",
+		"todomvc-common": "^1.0.5",
 		"tslib": "^2.3.0",
 		"zone.js": "~0.14.3"
 	},
@@ -44,6 +46,7 @@
 	"prettier": {
 		"singleQuote": true,
 		"useTabs": true,
+		"htmlWhitespaceSensitivity": "ignore",
 		"plugins": [
 			"prettier-plugin-organize-imports"
 		],

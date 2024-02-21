@@ -1,0 +1,178 @@
+<script lang="ts">
+import { computed, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+defineMetadata({
+	imports: [RouterLink],
+});
+
+type TodoFilter = 'all' | 'completed' | 'active';
+
+type TodoItem = {
+	complete: boolean;
+	id: string;
+	content: string;
+	editing: boolean;
+};
+
+const filterInput = input.required<TodoFilter>({ alias: 'f' });
+const filter = computed(() => filterInput() || 'all');
+
+const todos = signal<TodoItem[]>([]);
+const activeTodos = computed(() => todos().filter((todo) => !todo.complete));
+const filteredTodos = computed(() => {
+	switch (filter()) {
+		case 'completed':
+			return todos().filter((todo) => todo.complete);
+		case 'active':
+			return activeTodos();
+		case 'all':
+		default:
+			return todos();
+	}
+});
+
+function upsert(event: Event, id?: string) {
+	const input = event.target as HTMLInputElement;
+	const value = input.value.trim();
+
+	if (!value) return;
+
+	if (!id) {
+		todos.update((list) => [
+			...list,
+			{
+				id: Date.now().toString(),
+				complete: false,
+				editing: false,
+				content: value,
+			},
+		]);
+		input.value = '';
+		return;
+	}
+
+	todos.update((list) =>
+		list.map((todo) => {
+			if (todo.id !== id) return todo;
+			return { ...todo, content: value, editing: false };
+		}),
+	);
+}
+
+function deleteTodo(id: string) {
+	todos.update((list) => list.filter((item) => item.id !== id));
+}
+
+function toggle(id: string) {
+	todos.update((list) =>
+		list.map((item) => {
+			if (item.id !== id) return item;
+			return { ...item, complete: !item.complete };
+		}),
+	);
+}
+
+function toggleEditMode(id: string) {
+	todos.update((list) =>
+		list.map((item) => {
+			if (item.id !== id) return item;
+			return { ...item, editing: true };
+		}),
+	);
+}
+
+function toggleAll() {
+	const hasIncomplete = todos().some((todo) => !todo.complete);
+	todos.update((list) =>
+		list.map((item) => ({ ...item, complete: hasIncomplete })),
+	);
+}
+
+function clearComplete() {
+	todos.update((list) => list.filter((item) => !item.complete));
+}
+</script>
+
+<template>
+	<section class="todoapp">
+		<header class="header">
+			<h1>todos</h1>
+			<input
+				class="new-todo"
+				placeholder="What needs to be done?"
+				autofocus
+				(keyup.enter)="upsert($event)"
+			/>
+		</header>
+		<section class="main">
+			<input
+				id="toggle-all"
+				class="toggle-all"
+				type="checkbox"
+				(change)="toggleAll()"
+			/>
+			<label for="toggle-all">Mark all as complete</label>
+			<ul class="todo-list">
+				@for (todo of filteredTodos(); track todo.id) {
+				<li [class.completed]="todo.complete" [class.editing]="todo.editing">
+					<div class="view">
+						<input
+							class="toggle"
+							type="checkbox"
+							[checked]="todo.complete"
+							(change)="toggle(todo.id)"
+						/>
+						<label (dblclick)="toggleEditMode(todo.id)">
+							{{ todo.content }}
+						</label>
+						<button class="destroy" (click)="deleteTodo(todo.id)"></button>
+					</div>
+					<input
+						class="edit"
+						[value]="todo.content"
+						(keyup.enter)="upsert($event, todo.id)"
+					/>
+				</li>
+				}
+			</ul>
+		</section>
+		<footer class="footer">
+			<span class="todo-count">
+				<strong>{{ activeTodos().length }}</strong>
+				{{ activeTodos().length <= 1 ? 'item' : 'items' }} left
+			</span>
+			<ul class="filters">
+				@for (filterType of ['all', 'active', 'completed']; track filterType) {
+				<li>
+					<a
+						[class.selected]="filter() === filterType"
+						[routerLink]="[]"
+						[queryParams]="filterType === 'all' ? null : { f: filterType }"
+					>
+						{{ filterType }}
+					</a>
+				</li>
+				}
+			</ul>
+			<button
+				class="clear-completed"
+				[hidden]="activeTodos().length === todos().length"
+				(click)="clearComplete()"
+			>
+				Clear completed
+			</button>
+		</footer>
+	</section>
+	<footer class="info">
+		<p>Double-click to edit a todo</p>
+		<p>
+			Created by
+			<a href="http://github.com/nartc/analog-todomvc">Chau</a>
+		</p>
+		<p>
+			Part of
+			<a href="http://todomvc.com">TodoMVC</a>
+		</p>
+	</footer>
+</template>
