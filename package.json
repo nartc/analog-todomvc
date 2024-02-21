@@ -25,12 +25,11 @@
 		"zone.js": "~0.14.3"
 	},
 	"devDependencies": {
-		"@analogjs/vite-plugin-angular": "^0.2.38",
+		"@analogjs/vite-plugin-angular": "^0.2.39",
 		"@angular-builders/custom-esbuild": "^17.1.0",
 		"@angular-devkit/build-angular": "^17.2.0",
 		"@angular/cli": "^17.2.0",
 		"@angular/compiler-cli": "^17.2.0",
-		"@nx/devkit": "^18.0.4",
 		"@types/jasmine": "~5.1.0",
 		"jasmine-core": "~5.1.0",
 		"karma": "~6.4.0",
@@ -38,7 +37,6 @@
 		"karma-coverage": "~2.2.0",
 		"karma-jasmine": "~5.1.0",
 		"karma-jasmine-html-reporter": "~2.1.0",
-		"nx": "^18.0.4",
 		"prettier": "^3.2.5",
 		"prettier-plugin-organize-imports": "^3.2.4",
 		"typescript": "~5.3.2"
